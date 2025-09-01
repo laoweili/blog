@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>图片去重</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                position: relative;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+                background-image: url(https://image.gcores.com/72d3859c-9b12-4349-83ef-555ac3950d77.png?x-oss-process=style/content_watermark);
+                height: 100vh;
+                background-size: cover;
+            }
+
+            ul {
+                width: 380px;
+                height: 380px;
+                list-style: none;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            li {
+                width: 90px;
+                height: 90px;
+                border-radius: 10px;
+                overflow: hidden;
+                position: relative;
+                overflow: hidden;
+            }
+
+            li div {
+                position: absolute;
+                border-radius: 10px;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: url(./images/back1.jpg);
+                background-size: cover;
+                top: 0;
+                left: 0;
+                transition: all 1s;
+            }
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
+
+            .active {
+                top: -100%;
+                left: -100%;
+                transition: all 1s;
+            }
+
+            .fix {
+                top: -100%;
+                left: -100%;
+            }
+
+            p {
+                position: absolute;
+                left: 50%;
+                top: 20%;
+                transform: translateX(-50%);
+            }
+            button {
+                padding: 5px;
+                border: none;
+                border-radius: 3px;
+                position: relative;
+                top: -210px;
+                left:380px;
+                width: 70px;
+                background-color: rgb(207, 203, 198);
+                color: #6196CC;
+            }
+        </style>
+    </head>
+
+    <body>
+        <p></p>
+        <button onclick="reStart()">重新开始</button>
+        <ul></ul>
+        <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+        <script>
+            // 用来记录图片地址
+            var src = new Array(8).fill(0).map((item, i) => i)
+            // 解构
+            src.push(...src)
+            // 数组随机排序
+            src.sort(() => {
+                return Math.random() - 0.5
+            })
+
+            function update() {
+                for (let i = 0; i < src.length; i++) {
+                    $("ul").append(`
+            <li>
+                <img src="./images/p${src[i]}.jpg" alt="">
+                <div></div>
+            </li>
+            `)
+                }
+            }
+            // 重新开始
+            function reStart(){
+                location.reload()
+            }
+            // 初始化
+            update()
+            var n = 60
+            var arr = []
+            $("li").click(function () {
+                $(this).find("div").addClass("active")
+                arr.push($(this).index())
+                // 去重，避免用户连续点击同一张图片
+                arr = Array.from(new Set(arr))
+                if (arr.length == 2) {
+                    let first = $("li").eq(arr[0]).find("img").attr("src")
+                    let second = $("li").eq(arr[1]).find("img").attr("src")
+                    if (first == second) {
+                        arr = []
+                    } else {
+                        setTimeout(() => {
+                            arr.forEach(item => {
+                                $("li").eq(item).find("div").removeClass("active")
+                            })
+                            arr = []
+                        }, 800)
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>

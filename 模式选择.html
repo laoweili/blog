@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            background-color: #00bff3;
+        }
+        
+        body {
+            color: white;
+            /* display: flex;
+            justify-content: center; */
+            /* align-items: center; */
+        }
+
+        main {
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .car_box {
+            width: 400px;
+            height: 400px;
+            margin: 10px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        select {
+            /* background-color: #488ce4; */
+            /* color: white; */
+        }
+
+        select option {
+            margin-top: 5px;
+        }
+
+        .car_box div {
+            width: 95px;
+            height: 95px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 5px 5px rgba(0, 0, 0, .5);
+            margin-bottom: 10px;
+        }
+
+        .car_box img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .car_box img:nth-child(2) {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 10px;
+            transition: all .3s linear;
+        }
+
+        .active img:nth-child(2) {
+            top: -100%;
+            left: -100%;
+            /* opacity: 0; */
+        }
+
+        .timeout {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="play">
+            难度:<select name="" id="">
+                <option value="2">简单</option>
+                <option value="4" selected>普通</option>
+                <option value="6">困难</option>
+            </select>
+        </div>
+        <div class="car_box">
+        </div>
+        <span class="timeout"></span>
+    </main>
+
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        var time = 120;
+        function initData(len = 8) {
+            $('.car_box').html('');
+            if (len == 2) {
+                time = 5       
+                $('.car_box').css({ width: '200px', height: '200px' })
+            } else if (len == 18) {
+                time = 180        
+                $('.car_box').css({ width: '600px', height: '600px' })
+            } else {
+                $('.car_box').css({ width: '400px', height: '400px' })
+            }
+            var numArr = new Array(len).fill(1).map((item, i) => i++);
+            numArr.push(...numArr);//解构添加
+            console.log(numArr);
+            //初始渲染
+            //数组随机排序
+            numArr.sort(function () {
+                return Math.random() - 0.5;
+            })
+            for (let i = 0; i < numArr.length; i++) {
+                $('.car_box').append(`
+                <div data-num = '${numArr[i]}'>
+                    <img src="./images/p${numArr[i]}.jpg" alt="">
+                    <img src="./images/back1.jpg" alt="">
+                </div>
+            `)
+            }
+        }
+        initData();
+        $('select').change(function () {
+            if ($(':selected').val() == '2') {
+                initData(2);
+            } else if ($(':selected').val() == '6') {
+                initData(18);
+            } else {
+                initData();
+            }
+            click();
+        })
+        function click() {
+            //定义数组存储点击显示的两个内容
+            var chooseArr = [];
+            $('.car_box div').click(function () {   
+                // $(this).addClass('active');
+                if (chooseArr.length < 2) {
+                    $(this).addClass('active');
+                    chooseArr.push(this);
+                    var arr = new Set(chooseArr); // 去重
+                    chooseArr = [...arr];
+                    if (chooseArr.length == 2) {
+                        if (chooseArr[0].dataset.num != chooseArr[1].dataset.num) {
+                            setTimeout(function () {
+                                chooseArr[0].className = '';
+                                chooseArr[1].className = '';
+                                chooseArr = [];
+                            }, 500)
+                        } else {
+                            chooseArr = [];
+                        }
+                    }
+                }
+             
+             
+            })
+        }
+        click();
+        //倒计时
+        // var showtime = setInterval(() => {
+        //         time--;
+        //         initTime();
+        //         if (time == 0) {
+        //             clearInterval(showtime);
+        //         }
+              
+        //     }, 1000);
+        // function initTime() {
+        //     var m = parseInt(time / 60);
+        //     var s = time % 60;
+        //     m = m < 10 ? '0' + m : m;
+        //     s = s < 10 ? '0' + s : s;
+           
+        //     $('span').html(m + ':' + s)
+        // }
+        // initTime();
+    </script>
+</body>
+
+</html>
