@@ -1,150 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>图片去重</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-            }
 
-            body {
-                position: relative;
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                overflow: hidden;
-                background-image: url(https://image.gcores.com/72d3859c-9b12-4349-83ef-555ac3950d77.png?x-oss-process=style/content_watermark);
-                height: 100vh;
-                background-size: cover;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 
-            ul {
-                width: 380px;
-                height: 380px;
-                list-style: none;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-between;
-                align-items: center;
-            }
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            background-color: #00bff3;
+        }
+        
+        body {
+            color: white;
+            /* display: flex;
+            justify-content: center; */
+            /* align-items: center; */
+        }
 
-            li {
-                width: 90px;
-                height: 90px;
-                border-radius: 10px;
-                overflow: hidden;
-                position: relative;
-                overflow: hidden;
-            }
+        main {
+            margin-top: 20px;
+            position: relative;
+        }
 
-            li div {
-                position: absolute;
-                border-radius: 10px;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: url(./images/back1.jpg);
-                background-size: cover;
-                top: 0;
-                left: 0;
-                transition: all 1s;
-            }
+        .car_box {
+            width: 400px;
+            height: 400px;
+            margin: 10px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
 
-            img {
-                width: 100%;
-                height: 100%;
-            }
+        select {
+            /* background-color: #488ce4; */
+            /* color: white; */
+        }
 
-            .active {
-                top: -100%;
-                left: -100%;
-                transition: all 1s;
-            }
+        select option {
+            margin-top: 5px;
+        }
 
-            .fix {
-                top: -100%;
-                left: -100%;
-            }
+        .car_box div {
+            width: 95px;
+            height: 95px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 5px 5px rgba(0, 0, 0, .5);
+            margin-bottom: 10px;
+        }
 
-            p {
-                position: absolute;
-                left: 50%;
-                top: 20%;
-                transform: translateX(-50%);
-            }
-            button {
-                padding: 5px;
-                border: none;
-                border-radius: 3px;
-                position: relative;
-                top: -210px;
-                left:380px;
-                width: 70px;
-                background-color: rgb(207, 203, 198);
-                color: #6196CC;
-            }
-        </style>
-    </head>
+        .car_box img {
+            width: 100%;
+            height: 100%;
+        }
 
-    <body>
-        <p></p>
-        <button onclick="reStart()">重新开始</button>
-        <ul></ul>
-        <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
-        <script>
-            // 用来记录图片地址
-            var src = new Array(8).fill(0).map((item, i) => i)
-            // 解构
-            src.push(...src)
-            // 数组随机排序
-            src.sort(() => {
-                return Math.random() - 0.5
+        .car_box img:nth-child(2) {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 10px;
+            transition: all .3s linear;
+        }
+
+        .active img:nth-child(2) {
+            top: -100%;
+            left: -100%;
+            /* opacity: 0; */
+        }
+
+        .timeout {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="play">
+            难度:<select name="" id="">
+                <option value="2">简单</option>
+                <option value="4" selected>普通</option>
+                <option value="6">困难</option>
+            </select>
+        </div>
+        <div class="car_box">
+        </div>
+        <span class="timeout"></span>
+    </main>
+
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        var time = 120;
+        function initData(len = 8) {
+            $('.car_box').html('');
+            if (len == 2) {
+                time = 5       
+                $('.car_box').css({ width: '200px', height: '200px' })
+            } else if (len == 18) {
+                time = 180        
+                $('.car_box').css({ width: '600px', height: '600px' })
+            } else {
+                $('.car_box').css({ width: '400px', height: '400px' })
+            }
+            var numArr = new Array(len).fill(1).map((item, i) => i++);
+            numArr.push(...numArr);//解构添加
+            console.log(numArr);
+            //初始渲染
+            //数组随机排序
+            numArr.sort(function () {
+                return Math.random() - 0.5;
             })
-
-            function update() {
-                for (let i = 0; i < src.length; i++) {
-                    $("ul").append(`
-            <li>
-                <img src="./images/p${src[i]}.jpg" alt="">
-                <div></div>
-            </li>
+            for (let i = 0; i < numArr.length; i++) {
+                $('.car_box').append(`
+                <div data-num = '${numArr[i]}'>
+                    <img src="./images/p${numArr[i]}.jpg" alt="">
+                    <img src="./images/back1.jpg" alt="">
+                </div>
             `)
-                }
             }
-            // 重新开始
-            function reStart(){
-                location.reload()
+        }
+        initData();
+        $('select').change(function () {
+            if ($(':selected').val() == '2') {
+                initData(2);
+            } else if ($(':selected').val() == '6') {
+                initData(18);
+            } else {
+                initData();
             }
-            // 初始化
-            update()
-            var n = 60
-            var arr = []
-            $("li").click(function () {
-                $(this).find("div").addClass("active")
-                arr.push($(this).index())
-                // 去重，避免用户连续点击同一张图片
-                arr = Array.from(new Set(arr))
-                if (arr.length == 2) {
-                    let first = $("li").eq(arr[0]).find("img").attr("src")
-                    let second = $("li").eq(arr[1]).find("img").attr("src")
-                    if (first == second) {
-                        arr = []
-                    } else {
-                        setTimeout(() => {
-                            arr.forEach(item => {
-                                $("li").eq(item).find("div").removeClass("active")
-                            })
-                            arr = []
-                        }, 800)
+            click();
+        })
+        function click() {
+            //定义数组存储点击显示的两个内容
+            var chooseArr = [];
+            $('.car_box div').click(function () {   
+                // $(this).addClass('active');
+                if (chooseArr.length < 2) {
+                    $(this).addClass('active');
+                    chooseArr.push(this);
+                    var arr = new Set(chooseArr); // 去重
+                    chooseArr = [...arr];
+                    if (chooseArr.length == 2) {
+                        if (chooseArr[0].dataset.num != chooseArr[1].dataset.num) {
+                            setTimeout(function () {
+                                chooseArr[0].className = '';
+                                chooseArr[1].className = '';
+                                chooseArr = [];
+                            }, 500)
+                        } else {
+                            chooseArr = [];
+                        }
                     }
                 }
+             
+             
             })
-        </script>
-    </body>
+        }
+        click();
+        //倒计时
+        // var showtime = setInterval(() => {
+        //         time--;
+        //         initTime();
+        //         if (time == 0) {
+        //             clearInterval(showtime);
+        //         }
+              
+        //     }, 1000);
+        // function initTime() {
+        //     var m = parseInt(time / 60);
+        //     var s = time % 60;
+        //     m = m < 10 ? '0' + m : m;
+        //     s = s < 10 ? '0' + s : s;
+           
+        //     $('span').html(m + ':' + s)
+        // }
+        // initTime();
+    </script>
+</body>
+
 </html>
